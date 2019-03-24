@@ -555,7 +555,7 @@ def array_type(elt_type):
     )
     return struct_type
 
-int32_array = pointer(array_type(int_type))
+int32_array = pointer(array_type(ir.IntType(32)))
 int64_array = pointer(array_type(ir.IntType(64)))
 double_array = pointer(array_type(double_type))
 
@@ -665,9 +665,10 @@ class LLVMEmitter(object):
             llarg.name = name
 
             if is_array(argty):
-                zero = self.const(0)
-                one = self.const(1)
-                two = self.const(2)
+                # Structure field indexes are always int32 in LLVM
+                zero = ir.Constant(ir.IntType(32), 0)
+                one = ir.Constant(ir.IntType(32), 1)
+                two = ir.Constant(ir.IntType(32), 2)
 
                 data = self.builder.gep(llarg, [
                                         zero, zero], name=(name + '_data'))

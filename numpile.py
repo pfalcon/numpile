@@ -533,7 +533,7 @@ def dump(node):
 ### == LLVM Codegen ==
 
 pointer     = ir.PointerType
-int_type    = ir.IntType(32)
+int_type    = ir.IntType(64)
 float_type  = ir.FloatType()
 double_type = ir.DoubleType()
 bool_type   = ir.IntType(1)
@@ -770,6 +770,8 @@ class LLVMEmitter(object):
             if a.type == double_type:
                 return self.builder.fadd(a, b)
             else:
+                a = self.builder.sext(a, int_type)
+                b = self.builder.sext(b, int_type)
                 return self.builder.add(a, b)
         else:
             raise NotImplementedError
@@ -788,6 +790,7 @@ class LLVMEmitter(object):
         else:
             name = node.ref
             val = self.visit(node.val)
+            val = self.builder.sext(val, int_type)
             ty = self.specialize(node)
             var = self.builder.alloca(ty, name=name)
             self.builder.store(val, var)

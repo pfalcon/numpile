@@ -663,7 +663,7 @@ class LLVMEmitter(object):
 
         for (ar, llarg, argty) in zip(node.args, self.function.args, self.argtys):
             name = ar.id
-            llarg.name = name
+#            llarg.name = name
 
             if is_array(argty):
                 zero = self.const(0)

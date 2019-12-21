@@ -810,16 +810,15 @@ _nptypemap = {
 def mangler(fname, sig):
     return fname + str(hash(tuple(sig)))
 
-def wrap_module(sig, llfunc):
-    pfunc = wrap_function(llfunc, engine)
+def wrap_module(sig, cgen):
+    pfunc = wrap_function(cgen, engine)
     dispatch = dispatcher(pfunc)
     return dispatch
 
-def wrap_function(func, engine):
-    args = func.type.pointee.args
-    ret_type = func.type.pointee.return_type
-    ret_ctype = wrap_type(ret_type)
-    args_ctypes = list(map(wrap_type, args))
+def wrap_function(cgen, engine):
+    func = cgen.function
+    ret_ctype = type_numpile2ctypes(cgen.retty)
+    args_ctypes = list(map(type_numpile2ctypes, cgen.argtys))
 
     functype = ctypes.CFUNCTYPE(ret_ctype, *args_ctypes)
     fptr = engine.get_function_address(func.name)
@@ -827,6 +826,14 @@ def wrap_function(func, engine):
     cfunc = functype(fptr)
     cfunc.__name__ = func.name
     return cfunc
+
+def type_numpile2ctypes(typ):
+    print(typ)
+    if typ == int64:
+        ctype = getattr(ctypes, "c_int64")
+    else:
+        assert 0
+    return ctype
 
 def wrap_type(llvm_type):
     if isinstance(llvm_type, ir.IntType):
@@ -953,8 +960,8 @@ def specialize(ast, infer_ty, mgu):
             if key in function_cache:
                 return function_cache[key](*args)
             else:
-                llfunc = codegen(ast, specializer, retty, argtys)
-                pyfunc = wrap_module(argtys, llfunc)
+                cgen = codegen(ast, specializer, retty, argtys)
+                pyfunc = wrap_module(argtys, cgen)
                 function_cache[key] = pyfunc
                 return pyfunc(*args)
         else:
@@ -991,7 +998,7 @@ def codegen(ast, specializer, retty, argtys):
 
     debug(cgen.function)
     debug(target_machine.emit_assembly(mod))
-    return cgen.function
+    return cgen
 
 def debug(fmt, *args):
     if DEBUG:

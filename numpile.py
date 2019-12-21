@@ -18,8 +18,14 @@ class np:
 from textwrap import dedent
 from collections import deque, defaultdict
 
-from llvmlite import ir
-import llvmlite.binding as llvm
+try:
+    from ullvmlite import ir
+    import ullvmlite.binding as llvm
+    ULLVMLITE = 1
+except ImportError:
+    from llvmlite import ir
+    import llvmlite.binding as llvm
+    ULLVMLITE = 0
 
 DEBUG = False
 

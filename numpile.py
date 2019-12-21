@@ -992,7 +992,11 @@ def codegen(ast, specializer, retty, argtys):
     cgen = LLVMEmitter(specializer, retty, argtys)
     cgen.visit(ast)
 
-    mod = llvm.parse_assembly(str(module))
+    if ULLVMLITE:
+        mod = module
+    else:
+        mod = llvm.parse_assembly(str(module))
+
     mod.verify()
 
     pmb = llvm.PassManagerBuilder()

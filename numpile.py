@@ -999,19 +999,19 @@ def codegen(ast, specializer, retty, argtys):
 
     mod.verify()
 
-    pmb = llvm.PassManagerBuilder()
-    pmb.opt_level=3
-    pmb.loop_vectorize = True
+#    pmb = llvm.PassManagerBuilder()
+#    pmb.opt_level=3
+#    pmb.loop_vectorize = True
 
-    pm = llvm.ModulePassManager()
-    pmb.populate(pm)
+#    pm = llvm.ModulePassManager()
+#    pmb.populate(pm)
 
-    pm.run(mod)
+#    pm.run(mod)
 
     engine.add_module(mod)
 
     debug(cgen.function)
-    debug(target_machine.emit_assembly(mod))
+    #debug(target_machine.emit_assembly(mod))
     return cgen
 
 def debug(fmt, *args):

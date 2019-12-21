@@ -911,7 +911,7 @@ def dispatcher(fn):
         pargs = list(args)
         rargs = list(map(wrap_arg, cargs, pargs))
         return fn(*rargs)
-    _call_closure.__name__ = fn.__name__
+#    _call_closure.__name__ = fn.__name__
     return _call_closure
 
 ### == Toplevel ==

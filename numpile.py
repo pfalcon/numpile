@@ -9,7 +9,11 @@ import ctypes
 import inspect
 import pprint
 import string
-import numpy as np
+#import numpy as np
+class np:
+    class ndarray:
+        pass
+
 
 from textwrap import dedent
 from collections import deque, defaultdict
